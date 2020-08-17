@@ -1,13 +1,24 @@
-import os, sys
+import os
 import time
+from sys import platform
+
+
 def clear_screen():
-    os.system('clear')
+    if platform == "linux" or platform == "linux2":
+        clear_screen_command = 'clear'
+    elif platform == "darwin":
+        clear_screen_command = 'cls'
+    elif platform == "win32":
+        clear_screen_command = 'cls'
+    os.system(clear_screen_command)
+
+
 class Menu:
     def __init__(self, name, items=None):
         self.name = name
         self.items = items or []
         self.loop = True
-        self.alertTrap = True
+
     def add_item(self, item):
         self.items.append(item)
         if item.parent != self:
@@ -22,36 +33,31 @@ class Menu:
         print(self.name)
         for item in self.items:
             item.draw()
+
     def end_prompt(self):
-        self.alertTrap = True
         self.loop = False
 
-    def alert(self,title,message):
-        self.alertTrap = True
+    def alert(self, title, message):
         clear_screen()
         print('!! ' + title + ' !!')
         print('- ' + message)
         input('Press Enter to continue ...')
-        clear_screen()
+
 
     def start_prompt(self):
         self.loop = True
         while self.loop is True:
+            clear_screen()
             self.draw()
             try:
                 choice = int(input('Choose #: ')) - 1
                 clear_screen()
                 try:
                     self.items[choice].function()
-                    if self.alertTrap is False:
-                        input('\nPress Enter to Continue ...')
-                    else:
-                        self.alertTrap = False
                 except IndexError:
-                    print('Invalid Choice - Try again!')
+                    self.alert('Choice Error','Invalid Choice - Try Again!')
             except ValueError:
-                clear_screen()
-                print('Invalid Choice - Try Again!')
+                self.alert('Choice Error', 'Invalid Choice - Try Again!')
 
 
 class Item:
