@@ -1,5 +1,6 @@
 import os, sys
 import time
+# last updated 8/18/2020
 
 
 def clear_screen():
